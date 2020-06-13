@@ -27,9 +27,10 @@ function addRandomGreeting() {
   greetingContainer.innerText = greeting;
 }
 
-function fetchName() {
+function getComments() {
   const messageContainer = document.getElementById('comments')
-  fetch('/data').then(response => response.json()).then(name => name.reduce((acc, curVal) =>
-    acc + "<p>" + curVal + "</p></br>")
-  ).then(comments => { messageContainer.innerHTML = comments});
+  fetch('/data').then(response => response.json()).then(comments => comments.reduce((acc, curVal) =>  {
+      return acc + "<p>" + curVal.comment + " - <b>" +  curVal.userName +"</b></p></br>"
+    }, "")
+    ).then(comments => messageContainer.innerHTML = comments);
 }
