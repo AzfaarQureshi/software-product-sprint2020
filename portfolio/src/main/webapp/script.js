@@ -26,3 +26,9 @@ function addRandomGreeting() {
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
 }
+
+function fetchName() {
+  fetch('/data').then(response => response.text()).then((name) => {
+    document.getElementById('name-container').innerHTML = name;
+  });
+}
