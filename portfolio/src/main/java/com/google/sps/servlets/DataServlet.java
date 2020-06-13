@@ -15,6 +15,13 @@
 package com.google.sps.servlets;
 import com.google.gson.Gson;
 import com.google.sps.data.Comments;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
+
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,6 +42,15 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json");
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("Comment");
+    PreparedQuery results = datastore.prepare(query);
+    for (Entity entity : results.asIterable()) {
+      String username = (String) entity.getProperty("userName");
+      String comment = (String) entity.getProperty("comment");
+      comments.addComment(username, comment);
+    }
+
     String json = new Gson().toJson(comments.getComments());
     response.getWriter().println(json);
   }
@@ -49,7 +65,14 @@ public class DataServlet extends HttpServlet {
     if (Boolean.parseBoolean(getParameter(request, "upper-case", "false"))) {
       comment = comment.toUpperCase();
     }
-    comments.addComment(request.getParameter("user-name"), comment);
+    // c.addComment(request.getParameter("user-name"), comment);
+    Entity commentEntity = new Entity("Comment");
+    commentEntity.setProperty("userName", request.getParameter("user-name"));
+    commentEntity.setProperty("comment", comment);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(commentEntity);
+
+
     response.sendRedirect("/index.html");
   }
 
