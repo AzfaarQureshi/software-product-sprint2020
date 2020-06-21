@@ -28,7 +28,8 @@ function addRandomGreeting() {
 }
 
 function fetchName() {
-  fetch('/data').then(response => response.text()).then((name) => {
-    document.getElementById('name-container').innerHTML = name;
-  });
+  const messageContainer = document.getElementById('comments')
+  fetch('/data').then(response => response.json()).then(name => name.reduce((acc, curVal) =>
+    acc + "<p>" + curVal + "</p></br>")
+  ).then(comments => { messageContainer.innerHTML = comments});
 }
