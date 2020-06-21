@@ -29,8 +29,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void init() {
     messages = new ArrayList<>();
-    messages.add(
-        "Azfaar Qureshi");
+    messages.add("Azfaar Qureshi");
     messages.add("They told me computers could only do arithmetic. - Grace Hopper");
     messages.add("A ship in port is safe, but that's not what ships are built for. - Grace Hopper");
     messages.add("It is much easier to apologise than it is to get permission. - Grace Hopper");
