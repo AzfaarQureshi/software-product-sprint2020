@@ -1,3 +1,10 @@
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
+<% BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+   String uploadUrl = blobstoreService.createUploadUrl("/my-form-handler");
+   System.out.println("BLOB" + uploadUrl);
+   %>
+
 <!DOCTYPE html>
 <html>
 
@@ -44,8 +51,7 @@
     </div>
   </div>
   </div>
-  <form action="/data" method="POST" enctype="multipart/form-data">
-
+  <form method="POST" enctype="multipart/form-data" action="/my-form-handler">
     <p>Share your thoughts</p>
     Username: <input type="text" name="user-name"> </br></br>
     comments: <input type="text" name="comment"> </br></br>
@@ -56,7 +62,5 @@
     upload: <input type="file" name="blobfile">
     <input type="submit" />
   </form>
-
 </body>
-
 </html>
