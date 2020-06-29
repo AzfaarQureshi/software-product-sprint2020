@@ -14,10 +14,42 @@
 
 package com.google.sps;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.lang.Math;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
+    if(request.getDuration() > TimeRange.WHOLE_DAY.duration()) return new ArrayList<TimeRange>();
+
+    ArrayList<TimeRange> eventTimeRanges = new ArrayList<TimeRange>();
+    Collection<String> requestAttendees = request.getAttendees();
+    for (Event e : events) {
+      if(validEvent(e, requestAttendees)) eventTimeRanges.add(e.getWhen());
+    }
+    Collections.sort(eventTimeRanges, TimeRange.ORDER_BY_START);
+    int start = TimeRange.START_OF_DAY;
+    ArrayList<TimeRange> validTimeRanges = new ArrayList<TimeRange>();
+    System.out.println("eventTimeRanges" + eventTimeRanges);
+    for (TimeRange t : eventTimeRanges) {
+        int duration = t.start() - start;
+        if (duration > 0 && duration >= request.getDuration())
+          validTimeRanges.add(TimeRange.fromStartDuration(start, duration));
+      start = Math.max(start, t.end());
+    }
+    if (TimeRange.END_OF_DAY - start > 0) {
+      validTimeRanges.add(TimeRange.fromStartDuration(start, TimeRange.END_OF_DAY - start+1));
+    }
+    return validTimeRanges;
+  }
+  private static Boolean validEvent(Event curEvent, Collection<String> queryAttendees) {
+    Set<String> curEventAttendees = curEvent.getAttendees();
+    for(String attendee : queryAttendees) {
+      if(curEventAttendees.contains(attendee)) return true;
+    }
+      return false;
   }
 }
+
