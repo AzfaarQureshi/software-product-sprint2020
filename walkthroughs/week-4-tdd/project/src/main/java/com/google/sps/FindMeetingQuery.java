@@ -29,19 +29,22 @@ public final class FindMeetingQuery {
     for (Event e : events) {
       if(validEvent(e, requestAttendees)) eventTimeRanges.add(e.getWhen());
     }
+
     Collections.sort(eventTimeRanges, TimeRange.ORDER_BY_START);
-    int start = TimeRange.START_OF_DAY;
+
+    int pointer = TimeRange.START_OF_DAY;
     ArrayList<TimeRange> validTimeRanges = new ArrayList<TimeRange>();
-    System.out.println("eventTimeRanges" + eventTimeRanges);
+
     for (TimeRange t : eventTimeRanges) {
-        int duration = t.start() - start;
+        int duration = t.start() - pointer;
         if (duration > 0 && duration >= request.getDuration())
-          validTimeRanges.add(TimeRange.fromStartDuration(start, duration));
-      start = Math.max(start, t.end());
+          validTimeRanges.add(TimeRange.fromStartDuration(pointer, duration));
+          pointer = Math.max(pointer, t.end());
     }
-    if (TimeRange.END_OF_DAY - start > 0) {
-      validTimeRanges.add(TimeRange.fromStartDuration(start, TimeRange.END_OF_DAY - start+1));
+    if (TimeRange.END_OF_DAY - pointer > 0) {
+      validTimeRanges.add(TimeRange.fromStartDuration(pointer, TimeRange.END_OF_DAY - pointer+1));
     }
+
     return validTimeRanges;
   }
   private static Boolean validEvent(Event curEvent, Collection<String> queryAttendees) {
