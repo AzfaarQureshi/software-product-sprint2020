@@ -1,3 +1,10 @@
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
+<% BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+   String uploadUrl = blobstoreService.createUploadUrl("/my-form-handler");
+   System.out.println("BLOB" + uploadUrl);
+   %>
+
 <!DOCTYPE html>
 <html>
 
@@ -39,13 +46,12 @@
       <button onclick="addRandomGreeting()">Hello</button>
       <div id="greeting-container"></div>
     </div>
-    <h1>COMMENTS BELOW</h1> </br>
+    <h1>COMMENTS BELOW</h1></br>
     <div id="comments">
     </div>
   </div>
   </div>
-  <form action="/data" method="POST">
-
+  <form method="POST" enctype="multipart/form-data" action="/my-form-handler">
     <p>Share your thoughts</p>
     Username: <input type="text" name="user-name"> </br></br>
     comments: <input type="text" name="comment"> </br></br>
@@ -53,9 +59,8 @@
     <p>Choose some options:</p>
     <input type="checkbox" name="upper-case" value="true"> Upper-case
     <br/>
+    upload: <input type="file" name="blobfile">
     <input type="submit" />
   </form>
-
 </body>
-
 </html>
